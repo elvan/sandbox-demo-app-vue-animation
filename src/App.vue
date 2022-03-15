@@ -3,10 +3,19 @@
     <div class="block" :class="{ animate: animatedBlock }"></div>
     <button @click="animateBlock">Animate</button>
   </div>
+
+  <div class="container">
+    <transition>
+      <p v-if="paragraphisVisible">This is only sometimes visibles...</p>
+    </transition>
+    <button @click="toggleParagraph">Toggle Paragraph</button>
+  </div>
+
   <base-modal @close="hideDialog" v-if="dialogIsVisible">
     <p>This is a test dialog!</p>
     <button @click="hideDialog">Close it!</button>
   </base-modal>
+
   <div class="container">
     <button @click="showDialog">Show Dialog</button>
   </div>
@@ -18,12 +27,17 @@ export default {
     return {
       animatedBlock: false,
       dialogIsVisible: false,
+      paragraphisVisible: false,
     };
   },
 
   methods: {
     animateBlock() {
       this.animatedBlock = true;
+    },
+
+    toggleParagraph() {
+      this.paragraphisVisible = !this.paragraphisVisible;
     },
 
     showDialog() {

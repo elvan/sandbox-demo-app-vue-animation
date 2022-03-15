@@ -24,9 +24,6 @@ export default {
   methods: {
     animateBlock() {
       this.animatedBlock = true;
-      setTimeout(() => {
-        this.animatedBlock = false;
-      }, 1000);
     },
 
     showDialog() {
@@ -74,7 +71,7 @@ button:active {
   height: 8rem;
   background-color: #290033;
   margin-bottom: 2rem;
-  transition: transform 0.5s ease-out;
+  /* transition: transform 0.5s ease-out; */
 }
 
 .container {
@@ -90,6 +87,19 @@ button:active {
 }
 
 .animate {
-  transform: translateX(-150px);
+  /* transform: translateX(-150px); */
+  animation: slide-fade 0.5s ease-out forwards;
+}
+
+@keyframes slide-fade {
+  0% {
+    transform: translateX(0) scale(1);
+  }
+  75% {
+    transform: translateX(-100px) scale(1.1);
+  }
+  100% {
+    transform: translateX(-150px) scale(1);
+  }
 }
 </style>

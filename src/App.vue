@@ -13,6 +13,8 @@
       @before-leave="beforeLeave"
       @leave="leave"
       @after-leave="afterLeave"
+      @enter-cancelled="enterCancelled"
+      @leave-cancelled="leaveCancelled"
     >
       <p v-if="paraIsVisible">This is only sometimes visibles...</p>
     </transition>
@@ -44,6 +46,8 @@ export default {
       dialogIsVisible: false,
       paraIsVisible: false,
       usersAreVisible: false,
+      enterInterval: null,
+      leaveInterval: null,
     };
   },
 
@@ -75,11 +79,21 @@ export default {
     beforeEnter(el) {
       console.log('beforeEnter');
       console.log(el);
+      el.style.opacity = 0;
     },
 
-    enter(el) {
+    enter(el, done) {
       console.log('enter');
       console.log(el);
+      let round = 1;
+      this.enterInterval = setInterval(() => {
+        el.style.opacity = round * 0.01;
+        round++;
+        if (round > 100) {
+          clearInterval(this.enterInterval);
+          done();
+        }
+      }, 10);
     },
 
     afterEnter(el) {
@@ -92,14 +106,35 @@ export default {
       console.log(el);
     },
 
-    leave(el) {
+    leave(el, done) {
       console.log('leave');
       console.log(el);
+      let round = 1;
+      this.leaveInterval = setInterval(() => {
+        el.style.opacity = 1 - round * 0.01;
+        round++;
+        if (round > 100) {
+          clearInterval(this.leaveInterval);
+          done();
+        }
+      }, 10);
     },
 
     afterLeave(el) {
       console.log('afterLeave');
       console.log(el);
+    },
+
+    enterCancelled(el) {
+      console.log('enterCancelled');
+      console.log(el);
+      clearInterval(this.enterInterval);
+    },
+
+    leaveCancelled(el) {
+      console.log('leaveCancelled');
+      console.log(el);
+      clearInterval(this.leaveInterval);
     },
   },
 };
@@ -155,14 +190,6 @@ button:active {
 
 .animate {
   animation: slide-scale 0.5s ease-out forwards;
-}
-
-.para-enter-active {
-  animation: slide-scale 0.5s ease-out;
-}
-
-.para-leave-active {
-  animation: slide-scale 0.5s ease-out;
 }
 
 .fade-button-enter-from,

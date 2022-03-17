@@ -4,7 +4,6 @@
       {{ user }}
     </li>
   </transition-group>
-
   <div>
     <input type="text" ref="userNameInput" />
     <button @click="addUser">Add User</button>
@@ -15,18 +14,16 @@
 export default {
   data() {
     return {
-      users: ['Aaron', 'Bob', 'Cindy', 'Derek', 'Evan'],
+      users: ['Max', 'Manu', 'Julie', 'Angela', 'Michael'],
     };
   },
-
   methods: {
     addUser() {
       const enteredUserName = this.$refs.userNameInput.value;
       this.users.unshift(enteredUserName);
     },
-
     removeUser(user) {
-      this.users = this.users.filter((u) => u !== user);
+      this.users = this.users.filter((usr) => usr !== user);
     },
   },
 };
@@ -38,7 +35,6 @@ ul {
   margin: 1rem 0;
   padding: 0;
 }
-
 li {
   border: 1px solid #ccc;
   padding: 1rem;
@@ -71,6 +67,6 @@ li {
 }
 
 .user-list-move {
-  transition: transform 1s ease;
+  transition: transform 0.8s ease;
 }
 </style>

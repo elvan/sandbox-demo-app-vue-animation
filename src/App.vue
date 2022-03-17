@@ -1,55 +1,13 @@
 <template>
-  <div class="container">
-    <users-list></users-list>
-  </div>
-
-  <div class="container">
-    <div class="block" :class="{ animate: animatedBlock }"></div>
-    <button @click="animateBlock">Animate</button>
-  </div>
-
-  <div class="container">
-    <transition
-      :css="false"
-      @before-enter="beforeEnter"
-      @enter="enter"
-      @after-enter="afterEnter"
-      @before-leave="beforeLeave"
-      @leave="leave"
-      @after-leave="afterLeave"
-      @enter-cancelled="enterCancelled"
-      @leave-cancelled="leaveCancelled"
-    >
-      <p v-if="paraIsVisible">This is only sometimes visibles...</p>
-    </transition>
-    <button @click="toggleParagraph">Toggle Paragraph</button>
-  </div>
-
-  <div class="container">
+  <router-view v-slot="slotProps">
     <transition name="fade-button" mode="out-in">
-      <button @click="showUsers" v-if="!usersAreVisible">Show Users</button>
-      <button @click="hideUsers" v-else>Hide Users</button>
+      <component :is="slotProps.Component"></component>
     </transition>
-  </div>
-
-  <base-modal @close="hideDialog" :open="dialogIsVisible">
-    <p>This is a test dialog!</p>
-    <button @click="hideDialog">Close it!</button>
-  </base-modal>
-
-  <div class="container">
-    <button @click="showDialog">Show Dialog</button>
-  </div>
+  </router-view>
 </template>
 
 <script>
-import UsersList from './components/UsersList.vue';
-
 export default {
-  components: {
-    UsersList,
-  },
-
   data() {
     return {
       animatedBlock: false,
@@ -60,38 +18,20 @@ export default {
       leaveInterval: null,
     };
   },
-
   methods: {
-    animateBlock() {
-      this.animatedBlock = true;
+    enterCancelled(el) {
+      console.log(el);
+      clearInterval(this.enterInterval);
     },
-
-    toggleParagraph() {
-      this.paraIsVisible = !this.paraIsVisible;
+    leaveCancelled(el) {
+      console.log(el);
+      clearInterval(this.leaveInterval);
     },
-
-    showDialog() {
-      this.dialogIsVisible = true;
-    },
-
-    hideDialog() {
-      this.dialogIsVisible = false;
-    },
-
-    showUsers() {
-      this.usersAreVisible = true;
-    },
-
-    hideUsers() {
-      this.usersAreVisible = false;
-    },
-
     beforeEnter(el) {
       console.log('beforeEnter');
       console.log(el);
       el.style.opacity = 0;
     },
-
     enter(el, done) {
       console.log('enter');
       console.log(el);
@@ -103,19 +43,17 @@ export default {
           clearInterval(this.enterInterval);
           done();
         }
-      }, 10);
+      }, 20);
     },
-
     afterEnter(el) {
       console.log('afterEnter');
       console.log(el);
     },
-
     beforeLeave(el) {
       console.log('beforeLeave');
       console.log(el);
+      el.style.opacity = 1;
     },
-
     leave(el, done) {
       console.log('leave');
       console.log(el);
@@ -127,24 +65,29 @@ export default {
           clearInterval(this.leaveInterval);
           done();
         }
-      }, 10);
+      }, 20);
     },
-
     afterLeave(el) {
       console.log('afterLeave');
       console.log(el);
     },
-
-    enterCancelled(el) {
-      console.log('enterCancelled');
-      console.log(el);
-      clearInterval(this.enterInterval);
+    showUsers() {
+      this.usersAreVisible = true;
     },
-
-    leaveCancelled(el) {
-      console.log('leaveCancelled');
-      console.log(el);
-      clearInterval(this.leaveInterval);
+    hideUsers() {
+      this.usersAreVisible = false;
+    },
+    animateBlock() {
+      this.animatedBlock = true;
+    },
+    toggleParagraph() {
+      this.paraIsVisible = !this.paraIsVisible;
+    },
+    showDialog() {
+      this.dialogIsVisible = true;
+    },
+    hideDialog() {
+      this.dialogIsVisible = false;
     },
   },
 };
@@ -154,15 +97,12 @@ export default {
 * {
   box-sizing: border-box;
 }
-
 html {
   font-family: sans-serif;
 }
-
 body {
   margin: 0;
 }
-
 button {
   font: inherit;
   padding: 0.5rem 2rem;
@@ -172,20 +112,18 @@ button {
   color: white;
   cursor: pointer;
 }
-
 button:hover,
 button:active {
   background-color: #a80b48;
   border-color: #a80b48;
 }
-
 .block {
   width: 8rem;
   height: 8rem;
   background-color: #290033;
   margin-bottom: 2rem;
+  /* transition: transform 0.3s ease-out; */
 }
-
 .container {
   max-width: 40rem;
   margin: 2rem auto;
@@ -197,9 +135,9 @@ button:active {
   border: 2px solid #ccc;
   border-radius: 12px;
 }
-
 .animate {
-  animation: slide-scale 0.5s ease-out forwards;
+  /* transform: translateX(-150px); */
+  animation: slide-fade 0.3s ease-out forwards;
 }
 
 .fade-button-enter-from,
@@ -208,11 +146,11 @@ button:active {
 }
 
 .fade-button-enter-active {
-  transition: opacity 0.5s ease-out;
+  transition: opacity 0.3s ease-out;
 }
 
 .fade-button-leave-active {
-  transition: opacity 0.5s ease-in;
+  transition: opacity 0.3s ease-in;
 }
 
 .fade-button-enter-to,
@@ -220,13 +158,23 @@ button:active {
   opacity: 1;
 }
 
+.route-enter-active {
+  animation: slide-scale 0.4s ease-out;
+}
+
+.route-leave-active {
+  animation: slide-scale 0.4s ease-in;
+}
+
 @keyframes slide-scale {
   0% {
     transform: translateX(0) scale(1);
   }
-  75% {
-    transform: translateX(-100px) scale(1.1);
+
+  70% {
+    transform: translateX(-120px) scale(1.1);
   }
+
   100% {
     transform: translateX(-150px) scale(1);
   }
